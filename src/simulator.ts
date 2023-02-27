@@ -10,7 +10,7 @@ export function simulate(tasks: Task[], iterations: number) {
     results.push(result)
   }
 
-  return results.reduce((sum, r) => sum + r, 0) / results.length
+  return { total: results.reduce((sum, r) => sum + r, 0) / results.length }
 }
 
 function simulateOnce(tasks: Task[]) {
@@ -20,9 +20,15 @@ function simulateOnce(tasks: Task[]) {
     const { success, time } = simulateLoop(tasks)
     total += time
     completed = success
+
   }
 
   return total
+}
+
+interface Result {
+  success: boolean
+  time: number
 }
 
 function simulateLoop(tasks: Task[]): Result {
@@ -34,9 +40,5 @@ function simulateLoop(tasks: Task[]): Result {
   }
 
   return { success: true, time }
-}
 
-interface Result {
-  success: boolean
-  time: number
 }
