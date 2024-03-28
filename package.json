@@ -5,7 +5,9 @@
   "author": "John Nicholas <themrtortoise@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "yarn test:unit && yarn test:scenario",
+    "test:unit": "jest --testPathPattern='\\.spec\\.ts$'",
+    "test:scenario": "jest --testPathPattern='\\.scenario\\.ts$'"
   },
   "dependencies": {
     "chalk": "^5.3.0",
