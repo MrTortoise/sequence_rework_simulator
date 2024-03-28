@@ -1,3 +1,5 @@
+
+
 export interface Task {
   time: number
   failure: number
@@ -9,13 +11,14 @@ export type Breakdown = {
 }
 
 export interface SimulateResult {
+  name: string
   mean: number
   median: number
   mode: number
   iterations: number
 }
 
-export function simulate(tasks: Task[], iterations: number): SimulateResult {
+export function simulate(name: string, tasks: Task[], iterations: number): SimulateResult {
   let total = 0
   let breakdown: Breakdown = {}
   const totalTimes: number[] = []
@@ -32,7 +35,7 @@ export function simulate(tasks: Task[], iterations: number): SimulateResult {
   const mode = calculateMode(totalTimes)
   const max = totalTimes.reduce((acc, i) => i > acc ? i : acc, 0)
 
-  const result = { mean, median, mode, max, iterations, tasks }
+  const result = {name, mean, median, mode, max, iterations, tasks }
   console.log(result)
   return result
 }

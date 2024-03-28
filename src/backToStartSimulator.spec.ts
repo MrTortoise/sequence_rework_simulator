@@ -1,4 +1,5 @@
-import { simulate, findMedian } from './simulator'
+import { simulate, findMedian } from './backToStartSimulator'
+
 
 describe('median calculator will', () => {
   test('return undefined with no iteam', () => {
@@ -7,6 +8,7 @@ describe('median calculator will', () => {
 
   test('return item with single iteam', () => {
     expect(findMedian([12])).toEqual(12)
+   
   })
 
   test('return middle item with odd number', () => {
@@ -27,7 +29,7 @@ describe('median calculator will', () => {
 describe('simulator with 100% success', () => {
   test('one task will take time of task', () => {
     const tasks = [{ time: 100, failure: 0, name: 'dev' }]
-    const result = simulate(tasks, 100);
+    const result = simulate('single task', tasks, 100);
     expect(result.mean).toBe(100);
     //expect(result.breakdowns).toEqual([{ name: 'dev', total: 100 }])
     expect(result.median).toBe(100);
@@ -35,8 +37,9 @@ describe('simulator with 100% success', () => {
 
   test('two tasks will be total', () => {
     const tasks = [{ time: 100, failure: 0, name: 'dev' }, { time: 100, failure: 0, name: 'test' }]
-    expect(simulate(tasks, 100).mean).toBe(200);
-    expect(simulate(tasks, 100).median).toBe(200);
+    const result = simulate('2 tasks, 100 duration, 0 failure', tasks, 100)
+    expect(result.mean).toBe(200);
+    expect(result.median).toBe(200);
   })
 })
 
@@ -44,7 +47,7 @@ describe('simulator with 50% success', () => {
   const iterations = 1000000
   test('2 tasks task will a suprining amount of time', () => {
     const tasks = [{ time: 100, failure: 0, name: 'dev' }, { time: 100, failure: 0.5, name: 'test' }]//, { time: 100, failure: 0.5 }, { time: 100, failure: 0.5 }]
-    const result = simulate(tasks, iterations)
+    const result = simulate('2 tasks, 100 duration, 50% failure of second', tasks, iterations)
     expect(result.mean).toBeGreaterThan(395);
     expect(result.mean).toBeLessThan(405);
     expect(result.median).toBeGreaterThanOrEqual(200);
@@ -54,7 +57,7 @@ describe('simulator with 50% success', () => {
 
   test('3 tasks task will a suprining amount of time', () => {
     const tasks = [{ time: 100, failure: 0, name: 'dev' }, { time: 100, failure: 0.5, name: 'test' }, { time: 100, failure: 0.5, name: 'nearest' }]//, { time: 100, failure: 0.5 }]
-    const result = simulate(tasks, iterations)
+    const result = simulate('3 tasks,100 duration, 2+3 have failure rate of 50%', tasks, iterations)
     expect(result.mean).toBeGreaterThan(995);
     expect(result.mean).toBeLessThan(1005);
     expect(result.median).toBeGreaterThanOrEqual(700);
@@ -62,9 +65,20 @@ describe('simulator with 50% success', () => {
     expect(result.mode).toBe(300);
   })
 
+  
+  test('3 tasks task with only QA failure a suprining amount of time', () => {
+    const tasks = [{ time: 100, failure: 0, name: 'product' }, { time: 100, failure: 0, name: 'dev' }, { time: 100, failure: 0.5, name: 'QA' }]//, { time: 100, failure: 0.5 }]
+    const result = simulate('3 tasks,100 duration, 3 has failure rate of 50%', tasks, iterations)
+    expect(result.mean).toBeGreaterThan(599);
+    expect(result.mean).toBeLessThan(601);
+    expect(result.median).toBeGreaterThanOrEqual(599);
+    expect(result.median).toBeLessThanOrEqual(601);
+    expect(result.mode).toBe(300);
+  })
+
   test('4 tasks task will a suprining amount of time', () => {
     const tasks = [{ time: 100, failure: 0, name: 'dev' }, { time: 100, failure: 0.5, name: 'test' }, { time: 100, failure: 0.5, name: 'nearest' }, { time: 100, failure: 0.5, name: 'int' }]
-    const result = simulate(tasks, iterations)
+    const result = simulate('4 tasks: dev, test, qa, int, 100 duration - 50% failure', tasks, iterations)
     expect(result.mean).toBeGreaterThan(2195);
     expect(result.mean).toBeLessThan(2205);
     expect(result.median).toBe(1600);
@@ -73,7 +87,7 @@ describe('simulator with 50% success', () => {
 
   test('2 tasks reversed  will a  less suprining amount of time', () => {
     const tasks = [{ time: 100, failure: 0.5, name: 'dev' }, { time: 100, failure: 0, name: 'test' }]//, { time: 100, failure: 0.5 }, { time: 100, failure: 0.5 }]
-    const result = simulate(tasks, iterations)
+    const result = simulate('2 tasks, first  (50%) second does not. 100 duration', tasks, iterations)
     expect(result.mean).toBeGreaterThan(295);
     expect(result.mean).toBeLessThan(305);
     expect(result.median).toBeGreaterThanOrEqual(200);
@@ -82,8 +96,8 @@ describe('simulator with 50% success', () => {
   })
 
   test('4 tasks first reversed rest halved  will a suprining amount of time', () => {
-    const tasks = [{ time: 100, failure: 0.5, name: 'dev' }, { time: 100, failure: 0, name: 'test' }, { time: 100, failure: 0.25, name: 'nearest' }, { time: 100, failure: 0.25, name: 'int' }]
-    const result = simulate(tasks, iterations)
+    const tasks = [{ time: 100, failure: 0.5, name: 'dev' }, { time: 100, failure: 0, name: 'qa' }, { time: 100, failure: 0.25, name: 'int' }, { time: 100, failure: 0.25, name: 'uat' }]
+    const result = simulate('4 tasks, dev (50%), qa (0%), int (25%), uat (25%)', tasks, iterations)
     expect(result.mean).toBeGreaterThan(843);
     expect(result.mean).toBeLessThan(853);
     expect(result.median).toBeGreaterThanOrEqual(700);

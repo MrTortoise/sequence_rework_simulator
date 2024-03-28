@@ -1,0 +1,12 @@
+{
+    "types": ["jest", "node"],
+    "ts-node": { "esm": true },
+    "exclude": [],
+    "include": ["*.ts"],
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "moduleResolution": "Node"
+        
+    }
+        
+}
